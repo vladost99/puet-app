@@ -47,7 +47,7 @@ import ModalAdd from "./ModalAdd.vue";
 import StudentRow from "./StudentRow.vue";
 import ModalEditing from "./ModalEditing.vue";
 import ModalDelete from "./ModalDelete.vue";
-//import { chunkArray } from "../../utils/generalFuncs";
+import { chunkArray } from "../../utils/generalFuncs";
 export default {
   components: { Header, StudentRow, ModalAdd, ModalEditing, ModalDelete },
   data() {
@@ -82,22 +82,23 @@ export default {
 
   computed: {
     //for perPAge
-    // studentsWithPages() {
-    //   const chunkDates = chunkArray(this.attendance_date, 30);
-    //   console.log(chunkDates);
-    //   let students = [...this.students];
-    //   students = students.map((student) => {
-    //     const newObj = { ...student };
-    //     const chunkAttendance = chunkArray(newObj.attendance, 30);
-    //     newObj.attendance = chunkAttendance[this.page] || newObj.attendance;
-    //     return newObj;
-    //   });
-    //   return {
-    //     count: chunkDates.length,
-    //     attendance_date: chunkDates[this.page] || this.attendance_date,
-    //     students: students,
-    //   };
-    // },
+    studentsWithPages() {
+      const perPage = 31;
+      const chunkDates = chunkArray(this.attendance_date, perPage);
+      let page = this.page - 1;
+      let students = [...this.students];
+      students = students.map((student) => {
+        const newObj = { ...student };
+        const chunkAttendance = chunkArray(newObj.attendance, perPage);
+        newObj.attendance = chunkAttendance[page] || newObj.attendance;
+        return newObj;
+      });
+      return {
+        count: chunkDates.length,
+        attendance_date: chunkDates[page] || this.attendance_date,
+        students: students,
+      };
+    },
   },
   mounted() {
     // this.students = this.studentNames.map((name) => ({
@@ -110,7 +111,7 @@ export default {
     //     other: 0,
     //   },
     // }));
-    this.generateData(20, false);
+    this.generateData(28, false);
   },
 
   methods: {
